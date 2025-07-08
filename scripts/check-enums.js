@@ -1,48 +1,59 @@
 require('dotenv').config();
-const { query } = require('./database-pg');
+const { query } = require('../src/config/database');
 
 async function checkEnums() {
   try {
-    console.log('🔍 Verificando tipos enum en la base de datos...\n');
+    console.log('🔍 Verificando enums...\n');
     
-    // Verificar enum estado_entrega_enum
-    const estadoEntrega = await query(`
-      SELECT unnest(enum_range(NULL::estado_entrega_enum)) as valor
-    `);
-    console.log('📋 Valores válidos para estado_entrega_enum:');
-    estadoEntrega.rows.forEach(row => {
-      console.log(`   - ${row.valor}`);
-    });
+    // Verificar enum de transmisión
+    console.log('📋 ENUM TRANSMISIÓN:');
+    console.log('=' .repeat(80));
+    try {
+      const transmisionResult = await query(`
+        SELECT unnest(enum_range(NULL::transmision_enum)) as valor
+      `);
+      console.log('Valores válidos:');
+      transmisionResult.rows.forEach(row => {
+        console.log(`  - ${row.valor}`);
+      });
+    } catch (error) {
+      console.log(`❌ Error verificando transmision_enum: ${error.message}`);
+    }
     
-    // Verificar enum estado_devolucion_enum
-    const estadoDevolucion = await query(`
-      SELECT unnest(enum_range(NULL::estado_devolucion_enum)) as valor
-    `);
-    console.log('\n📋 Valores válidos para estado_devolucion_enum:');
-    estadoDevolucion.rows.forEach(row => {
-      console.log(`   - ${row.valor}`);
-    });
+    // Verificar enum de condición
+    console.log('\n📋 ENUM CONDICIÓN:');
+    console.log('=' .repeat(80));
+    try {
+      const condicionResult = await query(`
+        SELECT unnest(enum_range(NULL::condicion_enum)) as valor
+      `);
+      console.log('Valores válidos:');
+      condicionResult.rows.forEach(row => {
+        console.log(`  - ${row.valor}`);
+      });
+    } catch (error) {
+      console.log(`❌ Error verificando condicion_enum: ${error.message}`);
+    }
     
-    // Verificar enum metodo_pago_enum
-    const metodoPago = await query(`
-      SELECT unnest(enum_range(NULL::metodo_pago_enum)) as valor
-    `);
-    console.log('\n📋 Valores válidos para metodo_pago_enum:');
-    metodoPago.rows.forEach(row => {
-      console.log(`   - ${row.valor}`);
-    });
-    
-    // Verificar enum estado_alquiler_enum
-    const estadoAlquiler = await query(`
-      SELECT unnest(enum_range(NULL::estado_alquiler_enum)) as valor
-    `);
-    console.log('\n📋 Valores válidos para estado_alquiler_enum:');
-    estadoAlquiler.rows.forEach(row => {
-      console.log(`   - ${row.valor}`);
-    });
+    // Verificar enum de estado de vehículo
+    console.log('\n📋 ENUM ESTADO VEHÍCULO:');
+    console.log('=' .repeat(80));
+    try {
+      const estadoResult = await query(`
+        SELECT unnest(enum_range(NULL::estado_vehiculo_enum)) as valor
+      `);
+      console.log('Valores válidos:');
+      estadoResult.rows.forEach(row => {
+        console.log(`  - ${row.valor}`);
+      });
+    } catch (error) {
+      console.log(`❌ Error verificando estado_vehiculo_enum: ${error.message}`);
+    }
     
   } catch (error) {
-    console.error('❌ Error:', error.message);
+    console.error('❌ Error verificando enums:', error.message);
+  } finally {
+    process.exit(0);
   }
 }
 

@@ -26,10 +26,33 @@ router.get('/test', async (req, res) => {
   }
 });
 
-// Ruta raíz
+// Ruta principal
 router.get('/', (req, res) => {
-  console.log('🏠 [ROOT] Ruta raíz accedida');
-  res.send('¡Bienvenido a la API de GestorDeCoches!');
+  res.json({
+    message: 'API de Gestión de Coches',
+    version: '1.0.0',
+    status: 'OK',
+    timestamp: new Date().toISOString(),
+    endpoints: {
+      auth: '/api/auth',
+      vehicles: '/api/vehicles',
+      health: '/health'
+    }
+  });
+});
+
+// Ruta de información del sistema
+router.get('/info', (req, res) => {
+  res.json({
+    name: 'Gestor de Coches API',
+    version: '1.0.0',
+    environment: process.env.NODE_ENV || 'development',
+    timestamp: new Date().toISOString(),
+    uptime: process.uptime(),
+    memory: process.memoryUsage(),
+    nodeVersion: process.version,
+    platform: process.platform
+  });
 });
 
 module.exports = router; 

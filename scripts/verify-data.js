@@ -1,5 +1,5 @@
 require('dotenv').config();
-const { query } = require('./database-pg');
+const { query } = require('../src/config/database');
 
 async function verificarDatos() {
   try {

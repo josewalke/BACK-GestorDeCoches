@@ -3,8 +3,11 @@ const router = express.Router();
 const { authenticateToken, requireRole } = require('../middlewares/auth');
 const vehicleController = require('../controllers/vehicleController');
 
+// Aplicar autenticación a todas las rutas de vehículos
+router.use(authenticateToken);
+
 // Obtener todos los vehículos
-router.get('/', authenticateToken, async (req, res) => {
+router.get('/', async (req, res) => {
   console.log('🚗 [VEHICLES] Obteniendo lista de vehículos');
   try {
     await vehicleController.getAllVehicles(req, res);
@@ -14,8 +17,41 @@ router.get('/', authenticateToken, async (req, res) => {
   }
 });
 
+// Obtener todas las ubicaciones
+router.get('/ubicaciones', async (req, res) => {
+  console.log('📍 [VEHICLES] Obteniendo lista de ubicaciones');
+  try {
+    await vehicleController.getAllLocations(req, res);
+  } catch (error) {
+    console.error('❌ [VEHICLES] Error obteniendo ubicaciones:', error.message);
+    res.status(500).json({ error: 'Error obteniendo ubicaciones' });
+  }
+});
+
+// Obtener dashboard con todos los datos
+router.get('/dashboard', async (req, res) => {
+  console.log('📊 [VEHICLES] Obteniendo dashboard');
+  try {
+    await vehicleController.getDashboard(req, res);
+  } catch (error) {
+    console.error('❌ [VEHICLES] Error obteniendo dashboard:', error.message);
+    res.status(500).json({ error: 'Error obteniendo dashboard' });
+  }
+});
+
+// Obtener reservas de un vehículo específico
+router.get('/:vehicleId/reservations', async (req, res) => {
+  console.log('📅 [VEHICLES] Obteniendo reservas del vehículo ID:', req.params.vehicleId);
+  try {
+    await vehicleController.getVehicleReservations(req, res);
+  } catch (error) {
+    console.error('❌ [VEHICLES] Error obteniendo reservas:', error.message);
+    res.status(500).json({ error: 'Error obteniendo reservas' });
+  }
+});
+
 // Obtener un vehículo por ID
-router.get('/:id', authenticateToken, async (req, res) => {
+router.get('/:id', async (req, res) => {
   console.log('🚗 [VEHICLES] Obteniendo vehículo ID:', req.params.id);
   try {
     await vehicleController.getVehicleById(req, res);
@@ -26,7 +62,7 @@ router.get('/:id', authenticateToken, async (req, res) => {
 });
 
 // Crear un nuevo vehículo
-router.post('/', authenticateToken, requireRole(['admin']), async (req, res) => {
+router.post('/', requireRole(['admin']), async (req, res) => {
   console.log('🚗 [VEHICLES] Creando nuevo vehículo');
   try {
     await vehicleController.createVehicle(req, res);
@@ -37,7 +73,7 @@ router.post('/', authenticateToken, requireRole(['admin']), async (req, res) => 
 });
 
 // Actualizar un vehículo
-router.put('/:id', authenticateToken, requireRole(['admin']), async (req, res) => {
+router.put('/:id', requireRole(['admin']), async (req, res) => {
   console.log('🚗 [VEHICLES] Actualizando vehículo ID:', req.params.id);
   try {
     await vehicleController.updateVehicle(req, res);
@@ -48,7 +84,7 @@ router.put('/:id', authenticateToken, requireRole(['admin']), async (req, res) =
 });
 
 // Eliminar un vehículo
-router.delete('/:id', authenticateToken, requireRole(['admin']), async (req, res) => {
+router.delete('/:id', requireRole(['admin']), async (req, res) => {
   console.log('🚗 [VEHICLES] Eliminando vehículo ID:', req.params.id);
   try {
     await vehicleController.deleteVehicle(req, res);

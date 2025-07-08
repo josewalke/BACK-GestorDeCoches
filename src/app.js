@@ -6,7 +6,7 @@ const cors = require('cors');
 const routes = require('./routes');
 
 const app = express();
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT || 3002;
 
 // Configurar JWT_SECRET si no está definido
 if (!process.env.JWT_SECRET) {

@@ -1,49 +1,38 @@
 require('dotenv').config();
-const { query } = require('./database-pg');
+const { query } = require('../src/config/database');
 
 async function checkTableStructure() {
   try {
-    console.log('🔍 Verificando estructura de las tablas...\n');
+    console.log('🔍 Verificando estructura de la tabla alquileres...');
     
-    // Verificar estructura de alquileres
-    console.log('📋 Estructura de tabla alquileres:');
-    const alquileresStructure = await query(`
+    const structure = await query(`
       SELECT column_name, data_type, is_nullable
       FROM information_schema.columns 
       WHERE table_name = 'alquileres'
       ORDER BY ordinal_position
     `);
     
-    alquileresStructure.rows.forEach(row => {
-      console.log(`   ${row.column_name}: ${row.data_type} (${row.is_nullable === 'YES' ? 'nullable' : 'not null'})`);
+    console.log('📋 Estructura de la tabla alquileres:');
+    structure.rows.forEach(col => {
+      console.log(`   ${col.column_name}: ${col.data_type} (${col.is_nullable === 'YES' ? 'NULL' : 'NOT NULL'})`);
     });
     
-    console.log('\n📋 Estructura de tabla reservas:');
-    const reservasStructure = await query(`
-      SELECT column_name, data_type, is_nullable
-      FROM information_schema.columns 
-      WHERE table_name = 'reservas'
-      ORDER BY ordinal_position
-    `);
+    // Verificar si hay datos
+    const count = await query(`SELECT COUNT(*) as total FROM alquileres`);
+    console.log(`\n📊 Total de registros: ${count.rows[0].total}`);
     
-    reservasStructure.rows.forEach(row => {
-      console.log(`   ${row.column_name}: ${row.data_type} (${row.is_nullable === 'YES' ? 'nullable' : 'not null'})`);
-    });
+    if (count.rows[0].total > 0) {
+      const sample = await query(`SELECT * FROM alquileres LIMIT 1`);
+      console.log('\n📋 Columnas disponibles en el primer registro:');
+      Object.keys(sample.rows[0]).forEach(key => {
+        console.log(`   ${key}: ${sample.rows[0][key]}`);
+      });
+    }
     
-    console.log('\n📋 Estructura de tabla mantenimientos:');
-    const mantenimientosStructure = await query(`
-      SELECT column_name, data_type, is_nullable
-      FROM information_schema.columns 
-      WHERE table_name = 'mantenimientos'
-      ORDER BY ordinal_position
-    `);
-    
-    mantenimientosStructure.rows.forEach(row => {
-      console.log(`   ${row.column_name}: ${row.data_type} (${row.is_nullable === 'YES' ? 'nullable' : 'not null'})`);
-    });
-    
+    process.exit(0);
   } catch (error) {
-    console.error('❌ Error verificando estructura:', error.message);
+    console.error('❌ Error:', error.message);
+    process.exit(1);
   }
 }
 
