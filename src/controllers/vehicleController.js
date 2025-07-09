@@ -363,6 +363,8 @@ const getVehicleReservations = async (req, res) => {
         res.estado_entrega,
         res.estado_devolucion,
         c.nombre as cliente_nombre,
+        c.apellidos as cliente_apellidos,
+        CONCAT(c.nombre, ' ', c.apellidos) as cliente_nombre_completo,
         cat.nombre as categoria_nombre,
         pickup_ub.nombre as pickup_ubicacion_nombre,
         dropoff_ub.nombre as dropoff_ubicacion_nombre

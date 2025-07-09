@@ -3,53 +3,41 @@ const { query } = require('../src/config/database');
 
 async function checkEnums() {
   try {
-    console.log('🔍 Verificando enums...\n');
+    console.log('🔍 Verificando enums en la base de datos...\n');
+
+    // Verificar enum estado_entrega_enum
+    const estadoEntregaResult = await query(`
+      SELECT unnest(enum_range(NULL::estado_entrega_enum)) as valores
+    `);
     
-    // Verificar enum de transmisión
-    console.log('📋 ENUM TRANSMISIÓN:');
-    console.log('=' .repeat(80));
-    try {
-      const transmisionResult = await query(`
-        SELECT unnest(enum_range(NULL::transmision_enum)) as valor
-      `);
-      console.log('Valores válidos:');
-      transmisionResult.rows.forEach(row => {
-        console.log(`  - ${row.valor}`);
-      });
-    } catch (error) {
-      console.log(`❌ Error verificando transmision_enum: ${error.message}`);
-    }
+    console.log('📋 Valores del enum estado_entrega_enum:');
+    estadoEntregaResult.rows.forEach((row, index) => {
+      console.log(`   ${index + 1}. ${row.valores}`);
+    });
+    console.log('');
+
+    // Verificar enum estado_devolucion_enum
+    const estadoDevolucionResult = await query(`
+      SELECT unnest(enum_range(NULL::estado_devolucion_enum)) as valores
+    `);
     
-    // Verificar enum de condición
-    console.log('\n📋 ENUM CONDICIÓN:');
-    console.log('=' .repeat(80));
-    try {
-      const condicionResult = await query(`
-        SELECT unnest(enum_range(NULL::condicion_enum)) as valor
-      `);
-      console.log('Valores válidos:');
-      condicionResult.rows.forEach(row => {
-        console.log(`  - ${row.valor}`);
-      });
-    } catch (error) {
-      console.log(`❌ Error verificando condicion_enum: ${error.message}`);
-    }
+    console.log('📋 Valores del enum estado_devolucion_enum:');
+    estadoDevolucionResult.rows.forEach((row, index) => {
+      console.log(`   ${index + 1}. ${row.valores}`);
+    });
+    console.log('');
+
+    // Verificar enum estado_vehiculo_enum
+    const estadoVehiculoResult = await query(`
+      SELECT unnest(enum_range(NULL::estado_vehiculo_enum)) as valores
+    `);
     
-    // Verificar enum de estado de vehículo
-    console.log('\n📋 ENUM ESTADO VEHÍCULO:');
-    console.log('=' .repeat(80));
-    try {
-      const estadoResult = await query(`
-        SELECT unnest(enum_range(NULL::estado_vehiculo_enum)) as valor
-      `);
-      console.log('Valores válidos:');
-      estadoResult.rows.forEach(row => {
-        console.log(`  - ${row.valor}`);
-      });
-    } catch (error) {
-      console.log(`❌ Error verificando estado_vehiculo_enum: ${error.message}`);
-    }
-    
+    console.log('📋 Valores del enum estado_vehiculo_enum:');
+    estadoVehiculoResult.rows.forEach((row, index) => {
+      console.log(`   ${index + 1}. ${row.valores}`);
+    });
+    console.log('');
+
   } catch (error) {
     console.error('❌ Error verificando enums:', error.message);
   } finally {
